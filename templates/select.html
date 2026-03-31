@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Fighter - Select Character</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚔️</text></svg>">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="game-container">
+        <div class="ascii-forest">
+╔══════════════════════════════════════════════════════════════════╗
+║                         ☁️☁️      ☁️☁️                           ║
+║                    ☁️☁️                  ☁️☁️                     ║
+║        🌲                    ╭─────────╮              🌲        ║
+║       🌲🌲                  │  🪜🪜🪜  │            🌲🌲         ║
+║      🌲  🌲                 │   🚪    │           🌲  🌲        ║
+║     🌲    🌲                │  🪜🪜🪜  │          🌲    🌲       ║
+║      ~~~~~~~~~~~~🌊~~~~~~~~~~~~🌊~~~~~~~~~~~~🌊~~~~~~~~~~      ║
+║    🌿🌿          🌿🌿                      🌿🌿        🌿🌿      ║
+║              🕊️          🕊️          🕊️                       ║
+╚══════════════════════════════════════════════════════════════════╝
+        </div>
+        
+        <h1 class="game-title">⚔️ TEXT FIGHTER ⚔️</h1>
+        <p class="game-subtitle">Choose Your Champion</p>
+        
+        <div class="character-select">
+            <form method="POST" action="{{ url_for('select_character') }}" class="char-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" name="character" value="monkey" class="char-btn">
+                    <div class="char-name monkey-char">🐒 MONKEY KING</div>
+                    <div class="char-stats">⚔️ POWER: ★★★★☆ | 🛡️ DEFENSE: ★★★☆☆</div>
+                    <div class="char-desc">Agile | Trickster | Evasion</div>
+                    <div class="char-special">✨ Special: Trickster's Advantage (+50% after dodge)</div>
+                </button>
+                <button type="submit" name="character" value="percy" class="char-btn">
+                    <div class="char-name percy-char">🌊 PERCY JACKSON</div>
+                    <div class="char-stats">⚔️ POWER: ★★★☆☆ | 🛡️ DEFENSE: ★★★★☆</div>
+                    <div class="char-desc">Tanky | Healing | Water Power</div>
+                    <div class="char-special">💧 Special: Water Empowerment (up to +45% damage)</div>
+                </button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
