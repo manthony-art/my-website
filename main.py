@@ -34,14 +34,13 @@ IS_PRODUCTION = bool(
 )
 
 # ==================== SECURITY ====================
-
 if IS_PRODUCTION:
     secret_key = os.environ.get("SECRET_KEY")
     if not secret_key:
         raise RuntimeError("SECRET_KEY environment variable required!")
     app.config["SECRET_KEY"] = secret_key
 else:
-    app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", os.urandom(24).encode('hex'))
+    app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", os.urandom(24).hex())
 
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
