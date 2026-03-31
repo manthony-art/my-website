@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Fighter - About</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚔️</text></svg>">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="game-container">
+        <div class="ascii-forest">
+╔══════════════════════════════════════════════════════════════════╗
+║                         ☁️☁️      ☁️☁️                           ║
+║                    ☁️☁️                  ☁️☁️                     ║
+║        🌲                    ╭─────────╮              🌲        ║
+║       🌲🌲                  │  🪜🪜🪜  │            🌲🌲         ║
+║      🌲  🌲                 │   🚪    │           🌲  🌲        ║
+║     🌲    🌲                │  🪜🪜🪜  │          🌲    🌲       ║
+║      ~~~~~~~~~~~~🌊~~~~~~~~~~~~🌊~~~~~~~~~~~~🌊~~~~~~~~~~      ║
+║    🌿🌿          🌿🌿                      🌿🌿        🌿🌿      ║
+║              🕊️          🕊️          🕊️                       ║
+╚══════════════════════════════════════════════════════════════════╝
+        </div>
+        
+        <h1 class="game-title">⚔️ ABOUT TEXT FIGHTER ⚔️</h1>
+        
+        <div class="about-content">
+            <div class="about-section">
+                <h2>🎮 GAME OVERVIEW</h2>
+                <p>Text Fighter is a text-based fighting game brought to life in 3D using Three.js. Choose between the agile Monkey King or the tanky Percy Jackson and battle through intense rounds of strategic combat.</p>
+            </div>
+            
+            <div class="about-section">
+                <h2>✨ FEATURES</h2>
+                <ul class="feature-list">
+                    <li>✓ Deep combat system with status effects, combos, and positioning</li>
+                    <li>✓ Super meter system for special moves and supers</li>
+                    <li>✓ Unique character abilities and passives</li>
+                    <li>✓ AI with three difficulty levels (Easy/Normal/Hard)</li>
+                    <li>✓ Win streak system that rewards consistent victories</li>
+                    <li>✓ Rage mode for comeback potential</li>
+                    <li>✓ Combo finishers that reward long chains</li>
+                    <li>✓ Position‑based strategy (Close/Medium/Far)</li>
+                    <li>✓ Fully 3D arena with cel‑shaded visuals</li>
+                </ul>
+            </div>
+            
+            <div class="about-section">
+                <h2>🐒 MONKEY KING</h2>
+                <p>Agile trickster who excels at evasion and mix‑ups. After a successful dodge, his next attack is guaranteed to hit. Perfect for players who like to outmanoeuvre opponents.</p>
+            </div>
+            
+            <div class="about-section">
+                <h2>🌊 PERCY JACKSON</h2>
+                <p>Tanky water controller who can heal and build water empowerment stacks. When Percy heals, he gains temporary armour, making him harder to take down. Ideal for players who prefer a defensive, sustaining playstyle.</p>
+            </div>
+            
+            <div class="about-section">
+                <h2>🏆 TIPS & STRATEGY</h2>
+                <ul class="tip-list">
+                    <li>💡 Build super meter early to unleash powerful specials.</li>
+                    <li>💡 Watch your positioning – some moves only work at certain ranges.</li>
+                    <li>💡 Use combos to increase damage output and trigger finishers.</li>
+                    <li>💡 Block and dodge to avoid big damage and build meter.</li>
+                    <li>💡 Rage mode activates below 30% HP – use this for comebacks!</li>
+                    <li>💡 Maintain win streaks for bonus damage.</li>
+                </ul>
+            </div>
+            
+            <div class="about-section">
+                <h2>🔊 SOUND HOOKS</h2>
+                <p>Sound effects are ready to be added! The game includes placeholder hooks for hit sounds, special moves, and victory music.</p>
+            </div>
+        </div>
+        
+        <div class="nav-buttons">
+            <a href="{{ url_for('index') }}" class="nav-btn">🔙 BACK TO GAME</a>
+            <a href="{{ url_for('controls_page') }}" class="nav-btn">🎮 CONTROLS</a>
+        </div>
+    </div>
+</body>
+</html>
