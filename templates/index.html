@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Fighter - Monkey King vs Percy Jackson</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚔️</text></svg>">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="game-container">
+        <!-- ASCII Forest Background -->
+        <div class="ascii-forest" aria-label="Fantasy forest background">
+╔══════════════════════════════════════════════════════════════════╗
+║                         ☁️☁️      ☁️☁️                           ║
+║                    ☁️☁️                  ☁️☁️                     ║
+║        🌲                    ╭─────────╮              🌲        ║
+║       🌲🌲                  │  🪜🪜🪜  │            🌲🌲         ║
+║      🌲  🌲                 │   🚪    │           🌲  🌲        ║
+║     🌲    🌲                │  🪜🪜🪜  │          🌲    🌲       ║
+║      ~~~~~~~~~~~~🌊~~~~~~~~~~~~🌊~~~~~~~~~~~~🌊~~~~~~~~~~      ║
+║    🌿🌿          🌿🌿                      🌿🌿        🌿🌿      ║
+║              🕊️          🕊️          🕊️                       ║
+╚══════════════════════════════════════════════════════════════════╝
+        </div>
+        
+        <h1 class="game-title">⚔️ TEXT FIGHTER ⚔️</h1>
+        <p class="game-subtitle">{{ player_name }} vs {{ enemy_name }}</p>
+        
+        <!-- Fighters -->
+        <div class="fighters">
+            <!-- Player Card -->
+            <div class="fighter-card player-card">
+                <div class="fighter-name" aria-label="Player">🐒 {{ player_name }}</div>
+                <div class="health-label">❤️ HEALTH</div>
+                <div class="health-bar-container">
+                    {% set player_percent = (player_health / player_max_health) * 100 %}
+                    {% if player_percent < 0 %}{% set player_percent = 0 %}{% endif %}
+                    {% if player_percent > 100 %}{% set player_percent = 100 %}{% endif %}
+                    <div class="health-bar player-health" style="width: {{ player_percent }}%">
+                        <span class="health-text">{{ player_health }}/{{ player_max_health }}</span>
+                    </div>
+                </div>
+                <div class="meter-container">
+                    <div class="meter-bar" style="width: {{ player_meter }}%"></div>
+                </div>
+                <div class="stats">
+                    <div class="stat">
+                        <div class="stat-label">⚡ SUPER</div>
+                        <div class="stat-value">{{ player_meter }}%</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">📍 POSITION</div>
+                        <div class="stat-value">{{ player_position }}</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">🔥 COMBO</div>
+                        <div class="stat-value">x{{ player_combo }}</div>
+                    </div>
+                    {% if player_water > 0 %}
+                    <div class="stat">
+                        <div class="stat-label">💧 WATER</div>
+                        <div class="stat-value">{{ player_water }}/3</div>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="effects">
+                    <div class="stat-label">🌀 STATUS EFFECTS</div>
+                    <div>
+                        {% if player_effects %}
+                            {% for effect in player_effects %}
+                            <span class="effect-badge" style="border-left-color: {{ effect.color|default('#ffaa44') }}">
+                                {{ effect.name }} ({{ effect.duration }})
+                            </span>
+                            {% endfor %}
+                        {% else %}
+                            <span style="color:#666;">None</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Enemy Card -->
+            <div class="fighter-card enemy-card">
+                <div class="fighter-name" aria-label="Enemy">🌊 {{ enemy_name }}</div>
+                <div class="health-label">❤️ HEALTH</div>
+                <div class="health-bar-container">
+                    {% set enemy_percent = (enemy_health / enemy_max_health) * 100 %}
+                    {% if enemy_percent < 0 %}{% set enemy_percent = 0 %}{% endif %}
+                    {% if enemy_percent > 100 %}{% set enemy_percent = 100 %}{% endif %}
+                    <div class="health-bar enemy-health" style="width: {{ enemy_percent }}%">
+                        <span class="health-text">{{ enemy_health }}/{{ enemy_max_health }}</span>
+                    </div>
+                </div>
+                <div class="meter-container">
+                    <div class="meter-bar" style="width: {{ enemy_meter }}%"></div>
+                </div>
+                <div class="stats">
+                    <div class="stat">
+                        <div class="stat-label">⚡ SUPER</div>
+                        <div class="stat-value">{{ enemy_meter }}%</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">📍 POSITION</div>
+                        <div class="stat-value">{{ enemy_position }}</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">🔥 COMBO</div>
+                        <div class="stat-value">x{{ enemy_combo }}</div>
+                    </div>
+                </div>
+                <div class="effects">
+                    <div class="stat-label">🌀 STATUS EFFECTS</div>
+                    <div>
+                        {% if enemy_effects %}
+                            {% for effect in enemy_effects %}
+                            <span class="effect-badge" style="border-left-color: {{ effect.color|default('#44aaff') }}">
+                                {{ effect.name }} ({{ effect.duration }})
+                            </span>
+                            {% endfor %}
+                        {% else %}
+                            <span style="color:#666;">None</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Turn Counter -->
+        <div class="turn-info">
+            <span class="turn-badge" aria-label="Current turn">⚔️ TURN {{ turn }} ⚔️</span>
+        </div>
+        
+        <!-- Battle Log -->
+        <div class="battle-log" aria-live="polite">
+            <div class="log-title">📜 BATTLE LOG</div>
+            <div class="log-entry">{{ message }}</div>
+        </div>
+        
+        <!-- Action Buttons -->
+        {% if not game_over %}
+        <form method="POST" action="{{ url_for('action') }}" class="action-form" id="actionForm">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" name="move" value="1" class="action-btn attack-btn" aria-label="Attack">
+                ⚔️ ATTACK
+            </button>
+            <button type="submit" name="move" value="5" class="action-btn special-btn" aria-label="Special Attack">
+                ✨ SPECIAL ATTACK
+            </button>
+            <button type="submit" name="move" value="6" class="action-btn heal-btn" aria-label="Heal" {% if heal_cooldown > 0 %}disabled{% endif %}>
+                💚 HEAL
+            </button>
+        </form>
+        {% endif %}
+        
+        <!-- Game Control Buttons -->
+        <div style="display: flex; gap: 15px; justify-content: center; margin-top: 15px;">
+            <form method="POST" action="{{ url_for('reset') }}" style="display: inline;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="reset-btn" aria-label="Reset Game">
+                    🔄 RESET ROUND
+                </button>
+            </form>
+            <form method="POST" action="{{ url_for('new_game') }}" style="display: inline;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="reset-btn" aria-label="New Game">
+                    🎮 NEW GAME
+                </button>
+            </form>
+        </div>
+        
+        <!-- Game Over Message -->
+        {% if game_over %}
+        <div class="game-over" aria-live="polite">
+            <div class="game-over-message">
+                {% if winner == 'player' %}
+                🏆 VICTORY! 🏆
+                {% else %}
+                💀 DEFEAT! 💀
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    
+    <script>
+        // Prevent double submission
+        const forms = document.querySelectorAll('form');
+        forms.forEach(form => {
+            form.addEventListener('submit', function() {
+                const buttons = this.querySelectorAll('button');
+                buttons.forEach(button => {
+                    if (!button.disabled) {
+                        button.disabled = true;
+                        button.style.opacity = '0.6';
+                        button.style.cursor = 'wait';
+                    }
+                });
+            });
+        });
+        
+        // Auto-refresh for cooldown timer (optional)
+        {% if heal_cooldown > 0 and not game_over %}
+        setTimeout(function() {
+            location.reload();
+        }, 3000);
+        {% endif %}
+    </script>
+</body>
+</html>
