@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Fighter - Controls & How to Play</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚔️</text></svg>">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="game-container">
+        <div class="ascii-forest">
+╔══════════════════════════════════════════════════════════════════╗
+║                         ☁️☁️      ☁️☁️                           ║
+║                    ☁️☁️                  ☁️☁️                     ║
+║        🌲                    ╭─────────╮              🌲        ║
+║       🌲🌲                  │  🪜🪜🪜  │            🌲🌲         ║
+║      🌲  🌲                 │   🚪    │           🌲  🌲        ║
+║     🌲    🌲                │  🪜🪜🪜  │          🌲    🌲       ║
+║      ~~~~~~~~~~~~🌊~~~~~~~~~~~~🌊~~~~~~~~~~~~🌊~~~~~~~~~~      ║
+║    🌿🌿          🌿🌿                      🌿🌿        🌿🌿      ║
+║              🕊️          🕊️          🕊️                       ║
+╚══════════════════════════════════════════════════════════════════╝
+        </div>
+        
+        <h1 class="game-title">⚔️ HOW TO PLAY ⚔️</h1>
+        
+        <div class="controls-section">
+            <h2 class="section-title">🎮 BASIC CONTROLS</h2>
+            <div class="controls-grid">
+                <div class="control-card">
+                    <div class="control-name">⚡ LIGHT ATTACK</div>
+                    <div class="control-desc">Fast, accurate, low damage. Hard to punish.</div>
+                </div>
+                <div class="control-card">
+                    <div class="control-name">💥 HEAVY ATTACK</div>
+                    <div class="control-desc">Slow, high damage. Risky if misses.</div>
+                </div>
+                <div class="control-card">
+                    <div class="control-name">✨ SPECIAL ATTACK</div>
+                    <div class="control-desc">Powerful move. Costs 25% super meter.</div>
+                </div>
+                <div class="control-card">
+                    <div class="control-name">💫 SUPER MOVE</div>
+                    <div class="control-desc">Ultimate attack. Costs 100% super meter.</div>
+                </div>
+                <div class="control-card">
+                    <div class="control-name">🛡️ BLOCK</div>
+                    <div class="control-desc">Reduces incoming damage by 75%. Builds meter.</div>
+                </div>
+                <div class="control-card">
+                    <div class="control-name">💨 DODGE</div>
+                    <div class="control-desc">70% chance to avoid all damage. Costs 20% meter.</div>
+                </div>
+                <div class="control-card">
+                    <div class="control-name">💚 HEAL</div>
+                    <div class="control-desc">Restores health. 3‑turn cooldown.</div>
+                </div>
+                <div class="control-card">
+                    <div class="control-name">🏃 FORWARD / BACK</div>
+                    <div class="control-desc">Change range (Close / Medium / Far). Costs 5% meter.</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="controls-section">
+            <h2 class="section-title">⚔️ COMBAT MECHANICS</h2>
+            <div class="mechanics-list">
+                <div class="mechanic-item">
+                    <span class="mechanic-icon">🎯</span>
+                    <span class="mechanic-text"><strong>Accuracy & Miss Chance:</strong> Light attacks are very accurate; heavy and super moves can miss and leave you open to punishment.</span>
+                </div>
+                <div class="mechanic-item">
+                    <span class="mechanic-icon">✨</span>
+                    <span class="mechanic-text"><strong>Critical Hits:</strong> Random chance to deal 50% bonus damage. Increased by combos.</span>
+                </div>
+                <div class="mechanic-item">
+                    <span class="mechanic-icon">🔥</span>
+                    <span class="mechanic-text"><strong>Combos:</strong> Landing consecutive attacks builds a combo counter. Each hit adds +5% damage, and long combos trigger finisher bonuses.</span>
+                </div>
+                <div class="mechanic-item">
+                    <span class="mechanic-icon">🌀</span>
+                    <span class="mechanic-text"><strong>Status Effects:</strong> Stun, Burn, Poison, Empower, Weaken, Armor, and more can turn the tide.</span>
+                </div>
+                <div class="mechanic-item">
+                    <span class="mechanic-icon">⚡</span>
+                    <span class="mechanic-text"><strong>Super Meter:</strong> Builds when you deal or take damage. Spend it on specials, supers, dodges, or breaking stun.</span>
+                </div>
+                <div class="mechanic-item">
+                    <span class="mechanic-icon">📍</span>
+                    <span class="mechanic-text"><strong>Positioning:</strong> Close range favors melee; far range favors ranged attacks. Use step forward/back to control space.</span>
+                </div>
+                <div class="mechanic-item">
+                    <span class="mechanic-icon">🩸</span>
+                    <span class="mechanic-text"><strong>Rage Mode:</strong> Below 30% HP, you deal +10% damage and gain meter faster.</span>
+                </div>
+                <div class="mechanic-item">
+                    <span class="mechanic-icon">💪</span>
+                    <span class="mechanic-text"><strong>Character Passives:</strong> Monkey King's next attack is guaranteed after a successful dodge. Percy gains armor when healing.</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="controls-section">
+            <h2 class="section-title">🏆 WIN CONDITIONS</h2>
+            <div class="win-info">
+                <p>• Reduce the enemy’s HP to 0 to win the round.</p>
+                <p>• Best of 3 rounds wins the match.</p>
+                <p>• Maintain win streaks for bonus damage!</p>
+                <p>• Choose between Monkey King (agile) or Percy Jackson (tanky).</p>
+            </div>
+        </div>
+        
+        <div class="controls-section">
+            <h2 class="section-title">🎮 AI DIFFICULTY</h2>
+            <div class="difficulty-grid">
+                <div class="difficulty-card easy">
+                    <h3>EASY</h3>
+                    <p>Random moves. Good for beginners.</p>
+                </div>
+                <div class="difficulty-card normal">
+                    <h3>NORMAL</h3>
+                    <p>Strategic. Heals when low. Uses supers to finish.</p>
+                </div>
+                <div class="difficulty-card hard">
+                    <h3>HARD</h3>
+                    <p>Predicts patterns. Counters repeated moves. Optimal meter usage.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="nav-buttons">
+            <a href="{{ url_for('index') }}" class="nav-btn">🔙 BACK TO GAME</a>
+            <a href="{{ url_for('about_page') }}" class="nav-btn">📖 ABOUT</a>
+        </div>
+    </div>
+</body>
+</html>
