@@ -34,13 +34,14 @@ IS_PRODUCTION = bool(
 )
 
 # ==================== SECURITY ====================
+
 if IS_PRODUCTION:
     secret_key = os.environ.get("SECRET_KEY")
     if not secret_key:
         raise RuntimeError("SECRET_KEY environment variable required!")
     app.config["SECRET_KEY"] = secret_key
 else:
-    app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", os.urandom(24).hex())
+    app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", os.urandom(24).encode('hex'))
 
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
@@ -845,21 +846,217 @@ def action():
     
     # Enemy turn
     difficulty = SessionManager.get('ai_difficulty', 'normal')
-    cpu = CPUOpponent(enemy, difficulty)
-    enemy_moves = {
-        "1": {"name": "Attack", "type": "normal", "damage": random.randint(15, 25), "cost": 0},
-        "2": {"name": "Heavy Attack", "type": "normal", "damage": random.randint(25, 35), "cost": 0},
-        "3": {"name": "Special", "type": "special", "damage": random.randint(30, 45), "cost": 25},
-        "4": {"name": "Super", "type": "super", "damage": random.randint(45, 60), "cost": 100},
-        "B": {"name": "Block", "type": "defense", "effect": "block", "cost": 0},
-        "D": {"name": "Dodge", "type": "defense", "effect": "dodge", "cost": 20}
-    }
     
-    # Simple enemy AI with personality
+    # Simple enemy AI based on difficulty
     enemy_action = None
+    
     if difficulty == 'easy':
-        enemy_action = random.choice(['light', 'heavy', 'block'])
+        # Easy: random moves, rarely specials
+        roll = random.random()
+        if roll < 0.7:
+            enemy_action = random.choice(['light', 'heavy'])
+        elif roll < 0.85:
+            enemy_action = 'block'
+        else:
+            enemy_action = 'special' if enemy.super_meter >= 25 else 'light'
+    
     elif difficulty == 'normal':
+        # Normal: strategic
         if enemy.health < 30:
             enemy_action = 'heal'
-        elif enemy.super_meter >= 100 and random.random() < 0
+        elif enemy.super_meter >= 100 and random.random() < 0.5:
+            enemy_action = 'super'
+        elif enemy.super_meter >= 25 and random.random() < 0.4:
+            enemy_action = 'special'
+        elif random.random() < 0.3:
+            enemy_action = 'block'
+        else:
+            enemy_action = random.choice(['light', 'heavy'])
+    
+    else:  # hard
+        # Hard: aggressive, uses supers often, counters
+        if enemy.super_meter >= 100 and random.random() < 0.7:
+            enemy_action = 'super'
+        elif enemy.health < 40:
+            enemy_action = 'heal'
+        elif enemy.super_meter >= 25 and random.random() < 0.6:
+            enemy_action = 'special'
+        elif player.combo_count >= 3 and random.random() < 0.5:
+            enemy_action = 'dodge' if enemy.super_meter >= 20 else 'block'
+        elif random.random() < 0.4:
+            enemy_action = 'heavy'
+        else:
+            enemy_action = 'light'
+    
+    # Process enemy action
+    enemy_message = ""
+    enemy_damage = 0
+    
+    if enemy_action == 'light':
+        damage = int(enemy.power * random.randint(8, 12))
+        if random.random() < 0.9:
+            actual = enemy.take_damage(damage)
+            enemy_message = u"🗡️ Enemy Light Attack! {} damage!".format(actual)
+        else:
+            enemy_message = u"❌ Enemy missed!"
+    
+    elif enemy_action == 'heavy':
+        damage = int(enemy.power * random.randint(18, 25))
+        if random.random() < 0.7:
+            actual = enemy.take_damage(damage)
+            enemy_message = u"💥 Enemy Heavy Attack! {} damage!".format(actual)
+        else:
+            enemy_message = u"❌ Enemy Heavy Attack missed!"
+    
+    elif enemy_action == 'special':
+        if enemy.super_meter >= 25:
+            enemy.spend_meter(25)
+            damage = int(enemy.power * random.randint(25, 35))
+            if random.random() < 0.85:
+                actual = enemy.take_damage(damage)
+                enemy_message = u"✨ Enemy Special Attack! {} damage!".format(actual)
+            else:
+                enemy_message = u"❌ Enemy Special missed!"
+        else:
+            enemy_message = u"❌ Enemy tried special but no meter!"
+    
+    elif enemy_action == 'super':
+        if enemy.super_meter >= 100:
+            enemy.spend_meter(100)
+            damage = int(enemy.power * random.randint(40, 55))
+            if random.random() < 0.8:
+                actual = enemy.take_damage(damage)
+                enemy_message = u"💫 ENEMY SUPER MOVE! {} damage!".format(actual)
+            else:
+                enemy_message = u"❌ Enemy Super missed!"
+        else:
+            enemy_message = u"❌ Enemy tried super but no meter!"
+    
+    elif enemy_action == 'block':
+        SessionManager.set('enemy_blocking', True)
+        enemy_message = u"🛡️ Enemy blocks!"
+    
+    elif enemy_action == 'dodge':
+        if enemy.super_meter >= 20:
+            enemy.spend_meter(20)
+            if random.random() < 0.7:
+                enemy_message = u"💨 Enemy dodges!"
+                SessionManager.set('enemy_dodging', True)
+            else:
+                enemy_message = u"💨 Enemy dodge failed!"
+        else:
+            enemy_message = u"❌ Enemy tried to dodge but no meter!"
+    
+    elif enemy_action == 'heal':
+        heal_amount = random.randint(15, 25)
+        enemy.heal(heal_amount)
+        enemy_message = u"💚 Enemy heals {} HP!".format(heal_amount)
+    
+    # Apply blocking/dodging reduction for player's next turn (simplified)
+    if SessionManager.get('player_blocking', False):
+        # This would be used on the next player attack; for now, just reset
+        SessionManager.set('player_blocking', False)
+    
+    # Save enemy state
+    SessionManager.set('enemy_health', enemy.health)
+    SessionManager.set('enemy_super_meter', enemy.super_meter)
+    SessionManager.set('enemy_position', enemy.position)
+    SessionManager.set('enemy_combo', enemy.combo_count)
+    SessionManager.set('enemy_status_effects', enemy.status_effects)
+    
+    # Combine messages
+    combined = u"{} {}".format(message, enemy_message)
+    SessionManager.set('message', combined)
+    
+    # Increment turn
+    current_turn = SessionManager.get('turn', 1)
+    SessionManager.set('turn', current_turn + 1)
+    
+    # Apply status effects
+    player.apply_status_effects()
+    enemy.apply_status_effects()
+    SessionManager.set('player_status_effects', player.status_effects)
+    SessionManager.set('enemy_status_effects', enemy.status_effects)
+    
+    # Check if player died
+    if player.health <= 0:
+        SessionManager.set('game_over', True)
+        SessionManager.set('winner', 'enemy')
+        SessionManager.set('message', u"💀 DEFEAT! You lost! Win streak reset.")
+        SessionManager.set('win_streak', 0)
+        play_sound("defeat")
+        return redirect(url_for('index'))
+    
+    return redirect(url_for('index'))
+
+
+@app.route('/reset', methods=['POST'])
+def reset():
+    SessionManager.ensure()
+    character = SessionManager.get('player_character')
+    difficulty = SessionManager.get('ai_difficulty', 'normal')
+    if character:
+        SessionManager.set('player_health', 100)
+        SessionManager.set('enemy_health', 100)
+        SessionManager.set('player_super_meter', 0)
+        SessionManager.set('enemy_super_meter', 0)
+        SessionManager.set('turn', 1)
+        SessionManager.set('game_over', False)
+        SessionManager.set('winner', None)
+        SessionManager.set('message', get_random_intro_message())
+        SessionManager.set('player_position', "Medium")
+        SessionManager.set('enemy_position', "Medium")
+        SessionManager.set('player_combo', 0)
+        SessionManager.set('enemy_combo', 0)
+        SessionManager.set('player_water_stacks', 0)
+        SessionManager.set('heal_cooldown', 0)
+        SessionManager.set('player_next_attack_guaranteed', False)
+        SessionManager.set('player_status_effects', [])
+        SessionManager.set('enemy_status_effects', [])
+    return redirect(url_for('index'))
+
+
+@app.route('/new_game', methods=['POST'])
+def new_game():
+    SessionManager.ensure()
+    SessionManager.set('player_character', None)
+    return redirect(url_for('select_page'))
+
+
+@app.errorhandler(CSRFError)
+def handle_csrf_error(e):
+    SessionManager.ensure()
+    SessionManager.set('player_character', None)
+    return redirect(url_for('select_page'))
+
+
+@app.errorhandler(404)
+def not_found(error):
+    SessionManager.ensure()
+    return redirect(url_for('index'))
+
+
+@app.errorhandler(500)
+def internal_error(error):
+    SessionManager.ensure()
+    SessionManager.set('player_character', None)
+    return redirect(url_for('select_page'))
+
+
+@app.after_request
+def add_security_headers(response):
+    response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '-1'
+    return response
+
+
+if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 5000))
+    if IS_PRODUCTION:
+        print("🚀 TEXT FIGHTER - PRODUCTION MODE")
+        app.run(host='0.0.0.0', port=port, debug=False)
+    else:
+        print("🎮 TEXT FIGHTER - DEVELOPMENT MODE")
+        print("Running on http://localhost:{}".format(port))
+        app.run(host='0.0.0.0', port=port, debug=True)
