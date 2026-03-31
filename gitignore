@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+.env
+venv/
+.DS_Store
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+text_fighter.log
+*.db
+*.sqlite
+*.sqlite3
